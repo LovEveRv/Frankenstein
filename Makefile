@@ -1,6 +1,6 @@
 cc = g++
-files = input.h preprocessing.h core_processing.h output.h
-os = input.o preprocessing.o core_processing.o output.o
+files = input.h preprocessing.h core_processing.h output.h controller.h
+os = input.o preprocessing.o core_processing.o output.o controller.o
 
 all: main
 
@@ -15,6 +15,9 @@ core_processing.o: core_processing.cpp $(files)
 
 output.o: output.cpp $(files)
 	$(cc) output.cpp -o output.o -c -std=c++11
+
+controller.o: controller.cpp $(files)
+	$(cc) controller.cpp -o controller.o -c -std=c++11
 
 main: main.cpp $(files) $(os)
 	$(cc) main.cpp $(os) -o main -std=c++11
