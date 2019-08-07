@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <queue>
 
@@ -36,8 +37,16 @@ public:
 
 class Messager //Showing messages to create an interface
 {
-
+private:
+    std::ostream* os;
+    int former_percentage;
+public:
+    Messager(): os(&std::cout), former_percentage(-1) {}
+    void print_info(const std::string& str) {(*os) << str;}
+    void reset_percentage() {former_percentage = -1;}
+    void print_percentage(int percentage);
 };
+extern Messager msg;
 
 class Settings //Recording client settings
 {

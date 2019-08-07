@@ -17,6 +17,7 @@ namespace ALG //Default match algorithm
     std::vector<int> mark; //current arc optimization
     int S, T, V; //V records the number of nodes
     int Rnum, Tnum; //Number of resource pictures & Number of divides of target pictrue
+    int maxflow;
 
     void bfs(int x)
     {
@@ -75,10 +76,13 @@ namespace ALG //Default match algorithm
     {
         mark = std::vector<int>(V, 0);
         dis = std::vector<int>(V, 0);
+        maxflow = 0;
 
         int t = dinic();
         while(t > 0)
         {
+            maxflow += t;
+            msg.print_percentage(maxflow * 100 / Tnum);
             t = dinic();
         }
         //get match
@@ -145,6 +149,8 @@ namespace ALG //Default match algorithm
             ed[p[i]].flow -= t[T];
             ed[p[i] ^ 1].flow += t[T];
         }
+        maxflow += t[T];
+        msg.print_percentage(maxflow * 100 / Tnum);
         return true;
     }
     void mincostmaxflow(std::vector<std::vector<int> >& Matchinfo) //Give a "best" match
@@ -153,6 +159,7 @@ namespace ALG //Default match algorithm
         p = std::vector<int>(V, 0);
         t = std::vector<int>(V, 0);
         inq = std::vector<bool>(V, 0);
+        maxflow = 0;
 
         while(spfa());
         //get match
@@ -244,6 +251,8 @@ Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
 {
     Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
     myMatch->Match_Info = std::vector<std::vector<int> >(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
+    msg.print_info("Processing: ");
+    msg.print_percentage(0);
     
     if(alg_selection == 0) //dinic
     {
@@ -256,5 +265,7 @@ Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
         ALG::mincostmaxflow(myMatch->Match_Info);
     }
 
+    msg.print_percentage(100);
+    msg.print_info("\nComplete.\n");
     return myMatch;
 }
