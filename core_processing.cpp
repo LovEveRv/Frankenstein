@@ -17,7 +17,26 @@ namespace ALG //Default match algorithm
     std::vector<int> mark; //current arc optimization
     int S, T, V; //V records the number of nodes
     int Rnum, Tnum; //Number of resource pictures & Number of divides of target pictrue
-    int maxflow;
+    int totalflow;
+    inline void getmatch(std::vector<std::vector<int> >& Matchinfo)
+    {
+        for(int i = 0; i < Matchinfo.size(); i++)
+        {
+            for(int j = 0; j < Matchinfo[i].size(); j++)
+            {
+                int cur = last[i * Matchinfo.size() + j];
+                while(cur != -1)
+                {
+                    if(ed[cur].flow == 0 && ed[cur].to != S)
+                    {
+                        Matchinfo[i][j] = ed[cur].to - Tnum;
+                        break;
+                    }
+                    cur = ed[cur].next;
+                }
+            }
+        }
+    }
 
     void bfs(int x)
     {
@@ -50,7 +69,7 @@ namespace ALG //Default match algorithm
         for(int i = mark[x]; i != -1; i = ed[i].next)
         //search every edge
         {
-            if(dis[ed[i].to] == dis[x]+1)
+            if(dis[ed[i].to] == dis[x] + 1)
             //dfs condition
             {
                 int t = dfs(ed[i].to, std::min(f, ed[i].flow));
@@ -72,117 +91,94 @@ namespace ALG //Default match algorithm
         bfs(S);
         return dfs(S, INF);
     }
-    void getmaxflow(std::vector<std::vector<int> >& Matchinfo) //Give a "acceptable" match
+    void dinic(std::vector<std::vector<int> >& Matchinfo) //Dinic, give an "acceptable" match
     {
         mark = std::vector<int>(V, 0);
         dis = std::vector<int>(V, 0);
-        maxflow = 0;
+        totalflow = 0;
+
+        msg.print_info("Running: ");
+        msg.reset_percentage();
 
         int t = dinic();
         while(t > 0)
         {
-            maxflow += t;
-            msg.print_percentage(maxflow * 100 / Tnum);
+            totalflow += t;
+            msg.print_percentage(totalflow * 100 / Tnum);
             t = dinic();
         }
-        //get match
-        for(int i = 0; i < Matchinfo.size(); i++)
-        {
-            for(int j = 0; j < Matchinfo[i].size(); j++)
-            {
-                int cur = last[i * Matchinfo.size() + j];
-                while(cur != -1)
-                {
-                    if(ed[cur].flow == 0 && ed[cur].to != S)
-                    {
-                        Matchinfo[i][j] = ed[cur].to - Tnum;
-                        break;
-                    }
-                    cur = ed[cur].next;
-                }
-            }
-        }
+
+        getmatch(Matchinfo);
+
+        msg.print_info("\nComplete.\n");
     }
 
 
-    std::vector<int> d; //shortest path length
-    std::vector<int> p; //shortest path route
-    std::vector<int> t;
-    std::vector<bool> inq; //record if a node is in queue
-    bool spfa()
+    std::vector<int> DIS;
+    std::vector<bool> VIS;
+    int aug(int x, int flow)
     {
-        for(int i = 0; i < V; i++) 
+        VIS[x] = 1;
+        if(x == T)
         {
-            d[i] = INF;
-            inq[i] = 0;
+            totalflow += flow;
+            msg.print_percentage(totalflow * 100 / Tnum);
+            return flow;
         }
-        d[S] = 0;
-        inq[S] = 1;
-        p[S] = -1;
-        t[S] = INF;
-
-        std::queue<int> Q;
-        Q.push(S);
-        while(!Q.empty())
+        int tp;
+        for(int i = last[x]; i != -1; i = ed[i].next)
         {
-            int u = Q.front();
-            Q.pop();
-            inq[u] = 0;
-            for(int i = last[u]; i != -1; i = ed[i].next)
+            if(ed[i].flow > 0 && !VIS[ed[i].to] && DIS[x] + ed[i].cost == DIS[ed[i].to])
             {
-                if(ed[i].flow > 0 && d[ed[i].to] > d[u] + ed[i].cost)
+                tp = aug(ed[i].to, std::min(flow, ed[i].flow));
+                if(tp > 0)
                 {
-                    d[ed[i].to] = d[u] + ed[i].cost;
-                    p[ed[i].to] = i;
-                    t[ed[i].to] = std::min(t[u], ed[i].flow);
-                    if(!inq[ed[i].to])
-                    {
-                        Q.push(ed[i].to);
-                        inq[ed[i].to] = 1;
-                    }
+                    ed[i].flow -= tp;
+                    ed[i ^ 1].flow += tp;
+                    return tp;
                 }
             }
         }
-        if(d[T] == INF) return false; //can't arrive T
-        for(int i = T; i != S; i = ed[p[i]].from)
+        return 0;
+    }
+    bool mdf()
+    {
+        if(VIS[T] == 1) return true;
+        int z = INF;
+        for(int i = 0; i < ed.size(); i++)
         {
-            ed[p[i]].flow -= t[T];
-            ed[p[i] ^ 1].flow += t[T];
+            if(ed[i].flow > 0 && VIS[ed[i].from] && !VIS[ed[i].to]) z = std::min(z, DIS[ed[i].from] + ed[i].cost - DIS[ed[i].to]);
         }
-        maxflow += t[T];
-        msg.print_percentage(maxflow * 100 / Tnum);
+        if(z == INF) return false;
+        for(int i = 0; i < V; i++) if(VIS[i]) DIS[i] -= z;
         return true;
     }
-    void mincostmaxflow(std::vector<std::vector<int> >& Matchinfo) //Give a "best" match
+    void zkw(std::vector<std::vector<int> >& Matchinfo) //Zkw-costflow, give a "best" match
     {
-        d = std::vector<int>(V, 0);
-        p = std::vector<int>(V, 0);
-        t = std::vector<int>(V, 0);
-        inq = std::vector<bool>(V, 0);
-        maxflow = 0;
+        totalflow = 0;
+        DIS = std::vector<int>(V, 0);
+        VIS = std::vector<bool>(V, 0);
 
-        while(spfa());
-        //get match
-        for(int i = 0; i < Matchinfo.size(); i++)
+        msg.print_info("Running: ");
+        msg.reset_percentage();
+
+        do
         {
-            for(int j = 0; j < Matchinfo[i].size(); j++)
+            do
             {
-                int cur = last[i * Matchinfo.size() + j];
-                while(cur != -1)
-                {
-                    if(ed[cur].flow == 0 && ed[cur].to != S)
-                    {
-                        Matchinfo[i][j] = ed[cur].to - Tnum;
-                        break;
-                    }
-                    cur = ed[cur].next;
-                }
+                for(int i = 0; i < V; i++) VIS[i] = 0;
             }
+            while(aug(S, INF));
         }
+        while(mdf());
+
+        getmatch(Matchinfo);
+
+        msg.print_info("\nComplete.\n");
     }
 }
 
-int getdis(std::vector<int>& p1, std::vector<int>& p2, double dist_punish, int threshold)
+inline int getdis(std::vector<int>& p1, std::vector<int>& p2, double dist_punish, int threshold)
 {
     int ans = 0;
     for(int i = 0; i < p1.size(); i++)
@@ -223,6 +219,9 @@ void Core_Process_Module::Build_Graph()
     ALG::S = ALG::V - 2;
     ALG::last = std::vector<int>(ALG::V, -1);
 
+    msg.print_info("Building graph: ");
+    msg.reset_percentage();
+
     for(int i = 0; i < Input_Data->Target_Image_Info.size(); i++)
     {
         for(int j = 0; j < Input_Data->Target_Image_Info[i].size(); j++)
@@ -237,6 +236,8 @@ void Core_Process_Module::Build_Graph()
                 if(dis == -1) continue;
                 addedge(Tid, Rid, 1, dis);
             }
+
+            msg.print_percentage(Tid * 100 / (ALG::Tnum - 1));
         }
     }
     
@@ -245,27 +246,25 @@ void Core_Process_Module::Build_Graph()
         int Rid = ALG::Tnum + k;
         addedge(Rid, ALG::T, 1, 1);
     }
+
+    msg.print_info("\nComplete.\n");
 }
 
 Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
 {
     Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
     myMatch->Match_Info = std::vector<std::vector<int> >(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
-    msg.print_info("Processing: ");
-    msg.print_percentage(0);
     
     if(alg_selection == 0) //dinic
     {
         Build_Graph();
-        ALG::getmaxflow(myMatch->Match_Info);
+        ALG::dinic(myMatch->Match_Info);
     }
-    else if(alg_selection == 1) //costflow
+    else if(alg_selection == 1) //zkw-costflow
     {
         Build_Graph();
-        ALG::mincostmaxflow(myMatch->Match_Info);
+        ALG::zkw(myMatch->Match_Info);
     }
 
-    msg.print_percentage(100);
-    msg.print_info("\nComplete.\n");
     return myMatch;
 }
