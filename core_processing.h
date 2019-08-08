@@ -10,7 +10,7 @@ private:
     double dist_punish;
     int threshold;
 
-    void Build_Graph();
+    void Build_Graph(int opt = 0);
 public:
     Core_Process_Module(Datapack_Imageinfo* m_datapack, double m_dist_punish, int m_threshold): Input_Data(m_datapack), dist_punish(m_dist_punish), threshold(m_threshold) {}
     ~Core_Process_Module() {delete Input_Data;}

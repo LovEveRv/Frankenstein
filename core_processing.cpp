@@ -86,7 +86,7 @@ namespace ALG //Default match algorithm
         }
         return s;
     }
-    int dinic()
+    int rundinic()
     {
         bfs(S);
         return dfs(S, INF);
@@ -100,13 +100,14 @@ namespace ALG //Default match algorithm
         msg.print_info("Running: ");
         msg.reset_percentage();
 
-        int t = dinic();
-        while(t > 0)
+        int t = 0;
+        do
         {
+            t = rundinic();
             totalflow += t;
             msg.print_percentage(totalflow * 100 / Tnum);
-            t = dinic();
         }
+        while(t > 0);
 
         getmatch(Matchinfo);
 
@@ -210,7 +211,7 @@ inline void addedge(int from, int to, int flow, int cost)
     ALG::ed.push_back(e);
 }
 
-void Core_Process_Module::Build_Graph()
+void Core_Process_Module::Build_Graph(int opt)
 {
     ALG::Tnum = Input_Data->Target_Image_Info.size() * Input_Data->Target_Image_Info[0].size();
     ALG::Rnum = Input_Data->Resource_Image_Info.size();
@@ -229,12 +230,23 @@ void Core_Process_Module::Build_Graph()
             int Tid = i * Input_Data->Target_Image_Info.size() + j;
             addedge(ALG::S, Tid, 1, 1);
             
+            std::vector<std::pair<int, int> > candidate;
             for(int k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
             {
                 int Rid = ALG::Tnum + k;
                 int dis = getdis(Input_Data->Target_Image_Info[i][j], Input_Data->Resource_Image_Info[k], dist_punish, threshold);
                 if(dis == -1) continue;
-                addedge(Tid, Rid, 1, dis);
+                
+                if(opt)
+                {
+                    candidate.push_back(std::make_pair(dis, Rid));
+                }
+                else addedge(Tid, Rid, 1, dis);
+            }
+            if(opt)
+            {
+                std::sort(candidate.begin(), candidate.end());
+                for(int k = candidate.size() - 1; k >= 0; k--) addedge(Tid, candidate[k].second, 1, candidate[k].first);
             }
 
             msg.print_percentage(Tid * 100 / (ALG::Tnum - 1));
@@ -255,12 +267,12 @@ Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
     Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
     myMatch->Match_Info = std::vector<std::vector<int> >(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
     
-    if(alg_selection == 0) //dinic
+    if(alg_selection == 1) //dinic
     {
-        Build_Graph();
+        Build_Graph(1);
         ALG::dinic(myMatch->Match_Info);
     }
-    else if(alg_selection == 1) //zkw-costflow
+    else if(alg_selection == 2) //zkw-costflow
     {
         Build_Graph();
         ALG::zkw(myMatch->Match_Info);
