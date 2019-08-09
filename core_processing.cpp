@@ -1,4 +1,5 @@
 #include "core_processing.h"
+#include "neighbor_search.h"
 
 namespace ALG //Default match algorithm
 {
@@ -213,6 +214,7 @@ inline void addedge(int from, int to, int flow, int cost)
 
 void Core_Process_Module::Build_Graph(int opt)
 {
+    using std::vector;
     ALG::Tnum = Input_Data->Target_Image_Info.size() * Input_Data->Target_Image_Info[0].size();
     ALG::Rnum = Input_Data->Resource_Image_Info.size();
     ALG::V = ALG::Rnum + ALG::Tnum + 2;
@@ -223,36 +225,28 @@ void Core_Process_Module::Build_Graph(int opt)
     msg.print_info("Building graph: ");
     msg.reset_percentage();
 
-    for(int i = 0; i < Input_Data->Target_Image_Info.size(); i++)
+    #define cpy3(x,y) x[0]=y[0],x[1]=y[1],x[2]=y[2]
+    NeighborSearcher<3,256> fd_engine;
+    Element<3> point;
+    for(vector<int> &cur : Input_Data->Resource_Image_Info)
     {
-        for(int j = 0; j < Input_Data->Target_Image_Info[i].size(); j++)
-        {
-            int Tid = i * Input_Data->Target_Image_Info.size() + j;
-            addedge(ALG::S, Tid, 1, 1);
-            
-            std::vector<std::pair<int, int> > candidate;
-            for(int k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
-            {
-                int Rid = ALG::Tnum + k;
-                int dis = getdis(Input_Data->Target_Image_Info[i][j], Input_Data->Resource_Image_Info[k], dist_punish, threshold);
-                if(dis == -1) continue;
-                
-                if(opt)
-                {
-                    candidate.push_back(std::make_pair(dis, Rid));
-                }
-                else addedge(Tid, Rid, 1, dis);
-            }
-            if(opt)
-            {
-                std::sort(candidate.begin(), candidate.end());
-                for(int k = candidate.size() - 1; k >= 0; k--) addedge(Tid, candidate[k].second, 1, candidate[k].first);
-            }
-
-            msg.print_percentage(Tid * 100 / (ALG::Tnum - 1));
-        }
+        cpy3(point,cur);
+        fd_engine.add_point(point);
     }
-    
+    int Tid=0;
+    for(auto &i: Input_Data->Target_Image_Info)
+        for(vector<int> &j : i)
+        {
+            addedge(ALG::S, Tid, 1, 1);
+            cpy3(point,j);
+            vector<int> candidate_id = fd_engine.search_neighbor(point, threshold);
+            std::vector<std::pair<int, int> > candidate;
+            for(int k : candidate_id) candidate.emplace_back(getdis(j, Input_Data->Resource_Image_Info[k], dist_punish, threshold), k);
+            if(opt) std::sort(candidate.begin(), candidate.end());
+            for(int k = candidate.size() - 1; k >= 0; k--) addedge(Tid, candidate[k].second+ALG::Tnum, 1, candidate[k].first);
+            msg.print_percentage(Tid * 100 / (ALG::Tnum - 1));
+            ++Tid;
+        }    
     for(int k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
     {
         int Rid = ALG::Tnum + k;
@@ -267,15 +261,16 @@ Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
     Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
     myMatch->Match_Info = std::vector<std::vector<int> >(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
     
-    if(alg_selection == 1) //dinic
+    switch(alg_selection)
     {
-        Build_Graph(1);
-        ALG::dinic(myMatch->Match_Info);
-    }
-    else if(alg_selection == 2) //zkw-costflow
-    {
-        Build_Graph();
-        ALG::zkw(myMatch->Match_Info);
+        case 1:
+            Build_Graph(1);
+            ALG::dinic(myMatch->Match_Info);
+            break;
+        case 2:
+            Build_Graph();
+            ALG::zkw(myMatch->Match_Info);
+            break;
     }
 
     return myMatch;

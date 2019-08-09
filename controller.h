@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <cmath>
 #include <queue>
+#include <utility>
+#include <algorithm>
 
 class Datapack_Imagelist //Datapack, from INPUT module to PREPROCESSING module
 {
@@ -55,4 +57,4 @@ class Settings //Recording client settings
 
 #endif /* CONTROLLER_H_ */
 
-/* Developed by HarmoniaLeo & LovEveRv, 2019. All rights reserved. */
+/* Developed by LovEveRv, 2019. All rights reserved. */

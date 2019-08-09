@@ -19,4 +19,5 @@ public:
 
 #endif /* CORE_PROCESSING_H_ */
 
-/* Developed by HarmoniaLeo & LovEveRv, 2019. All rights reserved. */
+/* Developed by LovEveRv, 2019. All rights reserved. */
+/* Special thanks to lkmcfj. */
