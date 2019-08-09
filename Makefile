@@ -32,5 +32,8 @@ sparse_bitset.o: sparse_bitset.cpp $(files)
 main: main.cpp $(files) $(os)
 	$(cc) main.cpp $(os) -o main $(arg)
 
+test: test.cpp $(files) $(os)
+	$(cc) test.cpp $(os) -o test $(arg)
+
 clear:
 	rm -f $(os) main
