@@ -47,7 +47,7 @@ public:
     Messager(): os(&std::cout), former_percentage(-1) {}
     void print_info(const std::string& str) {(*os) << str;}
     void reset_percentage() {former_percentage = -1;}
-    void print_percentage(int percentage);
+    void print_percentage(int percentage); //print to screen
 };
 extern Messager msg;
 
