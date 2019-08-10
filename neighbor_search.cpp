@@ -1,55 +1,36 @@
 #include "neighbor_search.h"
 #include <cassert>
-#define bid(x) ((x)/S)
-#define R(x) (bid(x)*S+S-1)
-#define L(x) (bid(x)*S)
+#include <algorithm>
 using std::vector;
 using std::pair;
-template<size_t dim, int range>
-void NeighborSearcher<dim,range>::add_point(const Element<dim> &x)
+
+template<int range>
+NeighborSearcher<range>::NeighborSearcher(int m_dim, int m_d): _dim(m_dim), d(m_d), cnt(0) 
 {
-    pts.push_back(x);
-    int cur=pts.size()-1;
-    for(size_t i=0;i<dim;++i)
+    filter = new SparseBitset*[_dim];
+    for(int i=0;i<_dim;++i) filter[i] = new SparseBitset[range];
+}
+template<int range>
+NeighborSearcher<range>::~NeighborSearcher()
+{
+    for(int i=0;i<_dim;++i) delete[] filter[i];
+    delete[] filter;
+}
+template<int range>
+void NeighborSearcher<range>::add_point(const Element &x)
+{
+    int cur=cnt++;
+    for(size_t i=0;i<_dim;++i)
     {
-        filter[i][x[i]].push_back(cur);
-        block[i][x[i]/S].push_back(cur);
+        for(int j=std::max(0,x[i]-d);j<=std::min(range-1,x[i]+d);++j) filter[i][j].push_back(cur);
     }
 }
-template<size_t dim, int range>
-SparseBitset NeighborSearcher<dim,range>::query_dim(size_t d,int l,int r)
+template<int range>
+vector<int> NeighborSearcher<range>::search_neighbor(const Element &x)
 {
-    SparseBitset res;
-    if(bid(l)==bid(r))
-    {
-        for(int i=l;i<=r;++i) res.take_or(filter[d][i]);
-    } else
-    {
-        if(l!=L(l)) for(int i=l;i<=R(l);++i) res.take_or(filter[d][i]);
-            else res.take_or(block[d][bid(l)]);
-        if(r!=R(r)) for(int i=L(r);i<=r;++i) res.take_or(filter[d][i]);
-            else res.take_or(block[d][bid(r)]);
-        for(int i=bid(l)+1;i<bid(r);++i) res.take_or(block[d][i]);
-    }
-    return res;
-}
-template<size_t dim, int range>
-vector<int> NeighborSearcher<dim,range>::query(const vector<pair<int,int>> &qrange)
-{
-    assert(qrange.size()==dim);
-    SparseBitset res=query_dim(0,qrange[0].first,qrange[0].second);
-    for(size_t i=1;i<dim;++i)
-        res.take_and(query_dim(i,qrange[i].first,qrange[i].second));
+    SparseBitset res=filter[0][x[0]];
+    for(int i=1;i<_dim;++i) res.take_and(filter[i][x[i]]);
     return res.get_list1();
 }
-template<size_t dim, int range>
-vector<int> NeighborSearcher<dim,range>::search_neighbor(const Element<dim> &x,int d)
-{
-    vector<pair<int,int>> qrange;
-    for(int i=0;i<dim;++i) qrange.emplace_back(std::max(x[i]-d,0),std::min(x[i]+d,range-1));
-    return query(qrange);
-}
 
-template class NeighborSearcher<3,256>;
-template class NeighborSearcher<12,256>;
-template class NeighborSearcher<48,256>;
+template class NeighborSearcher<256>;

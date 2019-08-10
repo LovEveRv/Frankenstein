@@ -1,35 +1,25 @@
 #include <cmath>
 #include <algorithm>
 #include "point.h"
-template<size_t dim>
-Element<dim>::Element(int m_v[dim])
+
+Element& Element::operator=(const Element &x)
 {
-    for(int i=0;i<dim;++i) value[i]=m_v[i];
+    _dim = x._dim;
+    value = new int[_dim];
+    for(int i=0;i<_dim;i++) value[i] = x.value[i];
+    return *this;
 }
-template<size_t dim>
-int& Element<dim>::operator[](int index)
+Element::Element(Element &&x)
 {
-    return value[index];
+    _dim = x._dim;
+    value = x.value;
+    x.value = nullptr;
 }
-template<size_t dim>
-const int& Element<dim>::operator[](int index) const
+
+int dist(const Element &A,const Element &B)
 {
-    return value[index];
-}
-template<size_t dim>
-int dist(const Element<dim> &A,const Element<dim> &B)
-{
+    assert(A.dim() == B.dim());
     int ret=0;
-    for(int i=0;i<dim;++i) ret=std::max(ret,std::abs(A[i]-B[i]));
+    for(int i=0;i<A.dim();++i) ret=std::max(ret,std::abs(A[i]-B[i]));
     return ret;
 }
-
-template struct Element<3>;
-template struct Element<12>;
-template struct Element<48>;
-
-template int dist<3>(const Element<3>&,const Element<3>&);
-template int dist<12>(const Element<12>&,const Element<12>&);
-template int dist<48>(const Element<48>&,const Element<48>&);
-
-

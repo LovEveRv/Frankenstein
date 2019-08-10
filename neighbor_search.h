@@ -3,18 +3,21 @@
 #include <utility>
 #include "point.h"
 #include "sparse_bitset.h"
-constexpr int S=5;
-template<size_t dim,int range>//space: [0,range)^dim
+template<int range>//space: [0,range)^dim
 class NeighborSearcher
 {
-    std::vector<Element<dim>> pts;
-    SparseBitset filter[dim][range];
-    SparseBitset block[dim][range/S+1];
-    SparseBitset query_dim(size_t d,int l,int r);
+    int d, cnt;
+    int _dim;
+    SparseBitset **filter;
 public:
-    void add_point(const Element<dim> &x);
-    std::vector<int> query(const std::vector<std::pair<int,int>> &qrange);
-    std::vector<int> search_neighbor(const Element<dim> &center, int d);
+    NeighborSearcher(int m_dim, int m_d);
+    ~NeighborSearcher();
+    NeighborSearcher(const NeighborSearcher&) = delete;
+    NeighborSearcher(NeighborSearcher&&) = delete;
+    NeighborSearcher& operator=(const NeighborSearcher&) = delete;
+    NeighborSearcher& operator=(NeighborSearcher&&) = delete;
+    void add_point(const Element &x);
+    std::vector<int> search_neighbor(const Element &center);
 };
 
 /* Developed by lkmcfj, 2019. All rights reserved. */

@@ -9,6 +9,7 @@
 #include <queue>
 #include <utility>
 #include <algorithm>
+#include "point.h"
 
 class Datapack_Imagelist //Datapack, from INPUT module to PREPROCESSING module
 {
@@ -18,15 +19,15 @@ class Datapack_Imagelist //Datapack, from INPUT module to PREPROCESSING module
 class Datapack_Imageinfo //Datapack, from PREPROCESSING module to CORE_PROCESSING module
 {
 public:
-    std::vector<std::vector<int> > Resource_Image_Info;
-    std::vector<std::vector<std::vector<int> > > Target_Image_Info;
+    std::vector<Element> Resource_Image_Info;
+    std::vector<std::vector<Element>> Target_Image_Info;
     Datapack_Imageinfo() = default;
 };
 
 class Datapack_Matchinfo //Datapack, from CORE_PROCESSING module to OUTPUT module
 {
 public:
-    std::vector<std::vector<int> > Match_Info;
+    std::vector<std::vector<int>> Match_Info;
     Datapack_Matchinfo() = default;
 };
 

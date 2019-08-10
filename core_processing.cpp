@@ -19,7 +19,7 @@ namespace ALG //Default match algorithm
     int S, T, V; //V records the number of nodes
     int Rnum, Tnum; //Number of resource pictures & Number of divides of target pictrue
     int totalflow;
-    inline void getmatch(std::vector<std::vector<int> >& Matchinfo)
+    inline void getmatch(std::vector<std::vector<int>>& Matchinfo)
     {
         for(int i = 0; i < Matchinfo.size(); i++)
         {
@@ -92,7 +92,7 @@ namespace ALG //Default match algorithm
         bfs(S);
         return dfs(S, INF);
     }
-    void dinic(std::vector<std::vector<int> >& Matchinfo) //Dinic, give an "acceptable" match
+    void dinic(std::vector<std::vector<int>>& Matchinfo) //Dinic, give an "acceptable" match
     {
         mark = std::vector<int>(V, 0);
         dis = std::vector<int>(V, 0);
@@ -155,7 +155,7 @@ namespace ALG //Default match algorithm
         for(int i = 0; i < V; i++) if(VIS[i]) DIS[i] -= z;
         return true;
     }
-    void zkw(std::vector<std::vector<int> >& Matchinfo) //Zkw-costflow, give a "best" match
+    void zkw(std::vector<std::vector<int>>& Matchinfo) //Zkw-costflow, give a "best" match
     {
         totalflow = 0;
         DIS = std::vector<int>(V, 0);
@@ -180,10 +180,11 @@ namespace ALG //Default match algorithm
     }
 }
 
-inline int getdis(std::vector<int>& p1, std::vector<int>& p2, double dist_punish, int threshold)
+inline int getdis(Element& p1, Element& p2, double dist_punish, int threshold)
 {
+    assert(p1.dim() == p2.dim());
     int ans = 0;
-    for(int i = 0; i < p1.size(); i++)
+    for(int i = 0; i < p1.dim(); i++)
     {
         int dif = p1[i] - p2[i];
         if(abs(dif) > threshold) return -1;
@@ -225,22 +226,18 @@ void Core_Process_Module::Build_Graph(int opt)
     msg.print_info("Building graph: ");
     msg.reset_percentage();
 
-    #define cpy3(x,y) x[0]=y[0],x[1]=y[1],x[2]=y[2]
-    NeighborSearcher<3,256> fd_engine;
-    Element<3> point;
-    for(vector<int> &cur : Input_Data->Resource_Image_Info)
+    NeighborSearcher<256> fd_engine(Input_Data->Resource_Image_Info[0].dim(), threshold);
+    for(Element &cur : Input_Data->Resource_Image_Info)
     {
-        cpy3(point,cur);
-        fd_engine.add_point(point);
+        fd_engine.add_point(cur);
     }
     int Tid=0;
     for(auto &i: Input_Data->Target_Image_Info)
-        for(vector<int> &j : i)
+        for(Element &j : i)
         {
             addedge(ALG::S, Tid, 1, 1);
-            cpy3(point,j);
-            vector<int> candidate_id = fd_engine.search_neighbor(point, threshold);
-            std::vector<std::pair<int, int> > candidate;
+            vector<int> candidate_id = fd_engine.search_neighbor(j);
+            std::vector<std::pair<int, int>> candidate;
             for(int k : candidate_id) candidate.emplace_back(getdis(j, Input_Data->Resource_Image_Info[k], dist_punish, threshold), k);
             if(opt) std::sort(candidate.begin(), candidate.end());
             for(int k = candidate.size() - 1; k >= 0; k--) addedge(Tid, candidate[k].second+ALG::Tnum, 1, candidate[k].first);
@@ -259,7 +256,7 @@ void Core_Process_Module::Build_Graph(int opt)
 Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
 {
     Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
-    myMatch->Match_Info = std::vector<std::vector<int> >(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
+    myMatch->Match_Info = std::vector<std::vector<int>>(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
     
     switch(alg_selection)
     {
