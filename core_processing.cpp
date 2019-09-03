@@ -25,7 +25,7 @@ namespace ALG //Default match algorithm
         {
             for(int j = 0; j < Matchinfo[i].size(); j++)
             {
-                int cur = last[i * Matchinfo.size() + j];
+                int cur = last[i * Matchinfo[i].size() + j];
                 while(cur != -1)
                 {
                     if(ed[cur].flow == 0 && ed[cur].to != S)
