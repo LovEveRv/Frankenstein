@@ -98,7 +98,7 @@ namespace ALG //Default match algorithm
         dis = std::vector<int>(V, 0);
         totalflow = 0;
 
-        msg.print_info("Running: ");
+        //msg.print_info("Running: ");
         msg.reset_percentage();
 
         int t = 0;
@@ -106,13 +106,14 @@ namespace ALG //Default match algorithm
         {
             t = rundinic();
             totalflow += t;
-            msg.print_percentage(totalflow * 100 / Tnum);
+            msg.show_percentage(totalflow * 100 / Tnum);
         }
         while(t > 0);
 
         getmatch(Matchinfo);
 
-        msg.print_info("\nComplete.\n");
+        msg.show_percentage(100);
+        //msg.print_info("\nComplete.\n");
     }
 
 
@@ -124,7 +125,7 @@ namespace ALG //Default match algorithm
         if(x == T)
         {
             totalflow += flow;
-            msg.print_percentage(totalflow * 100 / Tnum);
+            msg.show_percentage(totalflow * 100 / Tnum);
             return flow;
         }
         int tp;
@@ -161,7 +162,7 @@ namespace ALG //Default match algorithm
         DIS = std::vector<int>(V, 0);
         VIS = std::vector<bool>(V, 0);
 
-        msg.print_info("Running: ");
+        //msg.print_info("Running: ");
         msg.reset_percentage();
 
         do
@@ -176,7 +177,8 @@ namespace ALG //Default match algorithm
 
         getmatch(Matchinfo);
 
-        msg.print_info("\nComplete.\n");
+        msg.show_percentage(100);
+        //msg.print_info("\nComplete.\n");
     }
 }
 
@@ -223,7 +225,7 @@ void Core_Process_Module::Build_Graph(int opt)
     ALG::S = ALG::V - 2;
     ALG::last = std::vector<int>(ALG::V, -1);
 
-    msg.print_info("Building graph: ");
+    //msg.print_info("Building graph: ");
     msg.reset_percentage();
 
     NeighborSearcher<256> fd_engine(Input_Data->Resource_Image_Info[0].dim(), threshold);
@@ -241,7 +243,7 @@ void Core_Process_Module::Build_Graph(int opt)
             for(int k : candidate_id) candidate.emplace_back(getdis(j, Input_Data->Resource_Image_Info[k], dist_punish, threshold), k);
             if(opt) std::sort(candidate.begin(), candidate.end());
             for(int k = candidate.size() - 1; k >= 0; k--) addedge(Tid, candidate[k].second+ALG::Tnum, 1, candidate[k].first);
-            msg.print_percentage(Tid * 100 / (ALG::Tnum - 1));
+            msg.show_percentage(Tid * 100 / (ALG::Tnum - 1));
             ++Tid;
         }    
     for(int k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
@@ -250,12 +252,14 @@ void Core_Process_Module::Build_Graph(int opt)
         addedge(Rid, ALG::T, 1, 1);
     }
 
-    msg.print_info("\nComplete.\n");
+    msg.show_percentage(100);
+    //msg.print_info("\nComplete.\n");
 }
 
 Datapack_Matchinfo* Core_Process_Module::execute(int alg_selection)
 {
-    Datapack_Matchinfo* myMatch = new Datapack_Matchinfo();
+    delete myMatch;
+    myMatch = new Datapack_Matchinfo();
     myMatch->Match_Info = std::vector<std::vector<int>>(Input_Data->Target_Image_Info.size(), std::vector<int>(Input_Data->Target_Image_Info[0].size(), -1));
     
     switch(alg_selection)

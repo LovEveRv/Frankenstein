@@ -30,7 +30,7 @@ def build_index(path, extension, filter):
             index_file.write(str(i) + ' "' + file + '"\n')
             i += 1
             print("Image " + str(i) + " index built.")
-    index_file.write(str(filter_x) + ' ' + str(filter_y))
+    index_file.write("shape " + str(filter_x) + ' ' + str(filter_y))
     index_file.close()
     print(str(i) + " images included. Index building finished.")
 

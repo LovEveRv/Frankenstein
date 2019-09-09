@@ -1,19 +1,20 @@
 #ifndef CORE_PROCESSING_H_
 #define CORE_PROCESSING_H_
 
-#include "controller.h"
+#include "modules.h"
 
 class Core_Process_Module
 {
 private:
     Datapack_Imageinfo* Input_Data;
+    Datapack_Matchinfo* myMatch;
     double dist_punish;
     int threshold;
 
     void Build_Graph(int opt = 0);
 public:
-    Core_Process_Module(Datapack_Imageinfo* m_datapack, double m_dist_punish, int m_threshold): Input_Data(m_datapack), dist_punish(m_dist_punish), threshold(m_threshold) {}
-    ~Core_Process_Module() {delete Input_Data;}
+    Core_Process_Module(Datapack_Imageinfo* m_datapack, double m_dist_punish, int m_threshold): Input_Data(m_datapack), myMatch(nullptr), dist_punish(m_dist_punish), threshold(m_threshold) {}
+    ~Core_Process_Module() {delete myMatch;}
     Datapack_Matchinfo* execute(int alg_selection);
 };
 
