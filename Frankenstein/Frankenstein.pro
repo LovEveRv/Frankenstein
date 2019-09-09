@@ -28,18 +28,26 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         controller.cpp \
+        modules.cpp \
         point.cpp \
         neighbor_search.cpp \
         sparse_bitset.cpp \
         core_processing.cpp \
+        input.cpp \
+        preprocessing.cpp \
+        output.cpp
 
 HEADERS += \
         mainwindow.h \
         controller.h \
+        modules.h \
         point.h \
         neighbor_search.h \
         sparse_bitset.h \
-        core_processing.h
+        core_processing.h \
+        input.h \
+        preprocessing.h \
+        output.h
 
 FORMS += \
         mainwindow.ui

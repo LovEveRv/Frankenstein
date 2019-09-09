@@ -35,6 +35,8 @@ public:
 class Settings //Recording client settings
 {
 public:
+    static int ALLOWED_WIDTH;
+    static int ALLOWED_HEIGHT;
     static int PROCESSING_WIDTH;
     static int PROCESSING_HEIGHT;
 

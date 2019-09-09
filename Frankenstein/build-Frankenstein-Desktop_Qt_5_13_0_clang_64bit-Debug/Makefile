@@ -55,17 +55,25 @@ OBJECTS_DIR   = ./
 SOURCES       = ../main.cpp \
 		../mainwindow.cpp \
 		../controller.cpp \
+		../modules.cpp \
 		../point.cpp \
 		../neighbor_search.cpp \
 		../sparse_bitset.cpp \
-		../core_processing.cpp moc_mainwindow.cpp
+		../core_processing.cpp \
+		../input.cpp \
+		../preprocessing.cpp \
+		../output.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		controller.o \
+		modules.o \
 		point.o \
 		neighbor_search.o \
 		sparse_bitset.o \
 		core_processing.o \
+		input.o \
+		preprocessing.o \
+		output.o \
 		moc_mainwindow.o
 DIST          = /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/qdevice.pri \
@@ -211,6 +219,7 @@ DIST          = /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_pr
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/qt_config.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_post.prf \
+		../.qmake.stash \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/toolchain.prf \
@@ -240,16 +249,24 @@ DIST          = /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_pr
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/lex.prf \
 		../../Frankenstein.pro ../mainwindow.h \
 		../controller.h \
+		../modules.h \
 		../point.h \
 		../neighbor_search.h \
 		../sparse_bitset.h \
-		../core_processing.h ../main.cpp \
+		../core_processing.h \
+		../input.h \
+		../preprocessing.h \
+		../output.h ../main.cpp \
 		../mainwindow.cpp \
 		../controller.cpp \
+		../modules.cpp \
 		../point.cpp \
 		../neighbor_search.cpp \
 		../sparse_bitset.cpp \
-		../core_processing.cpp
+		../core_processing.cpp \
+		../input.cpp \
+		../preprocessing.cpp \
+		../output.cpp
 QMAKE_TARGET  = Frankenstein
 DESTDIR       = 
 TARGET        = Frankenstein.app/Contents/MacOS/Frankenstein
@@ -416,6 +433,7 @@ Makefile: ../Frankenstein.pro /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/ma
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/qt_config.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/toolchain.prf \
@@ -592,6 +610,7 @@ Makefile: ../Frankenstein.pro /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/ma
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/qt_config.prf:
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/macx-clang/qmake.conf:
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/exclusive_builds.prf:
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/mac/sdk.prf:
 /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/toolchain.prf:
@@ -653,8 +672,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Users/lovever/Qt5.13.0/5.13.0/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../mainwindow.h ../controller.h ../point.h ../neighbor_search.h ../sparse_bitset.h ../core_processing.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../mainwindow.cpp ../controller.cpp ../point.cpp ../neighbor_search.cpp ../sparse_bitset.cpp ../core_processing.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../mainwindow.h ../controller.h ../modules.h ../point.h ../neighbor_search.h ../sparse_bitset.h ../core_processing.h ../input.h ../preprocessing.h ../output.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../mainwindow.cpp ../controller.cpp ../modules.cpp ../point.cpp ../neighbor_search.cpp ../sparse_bitset.cpp ../core_processing.cpp ../input.cpp ../preprocessing.cpp ../output.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../mainwindow.ui $(DISTDIR)/
 
 
@@ -665,6 +684,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r Frankenstein.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -735,9 +755,12 @@ mainwindow.o: ../mainwindow.cpp ../mainwindow.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../mainwindow.cpp
 
-controller.o: ../controller.cpp ../controller.h \
-		../point.h
+controller.o: ../controller.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controller.o ../controller.cpp
+
+modules.o: ../modules.cpp ../modules.h \
+		../point.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o modules.o ../modules.cpp
 
 point.o: ../point.cpp ../point.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o point.o ../point.cpp
@@ -751,11 +774,22 @@ sparse_bitset.o: ../sparse_bitset.cpp ../sparse_bitset.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sparse_bitset.o ../sparse_bitset.cpp
 
 core_processing.o: ../core_processing.cpp ../core_processing.h \
-		../controller.h \
+		../modules.h \
 		../point.h \
 		../neighbor_search.h \
 		../sparse_bitset.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o core_processing.o ../core_processing.cpp
+
+input.o: ../input.cpp ../input.h \
+		../modules.h \
+		../point.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o input.o ../input.cpp
+
+preprocessing.o: ../preprocessing.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o preprocessing.o ../preprocessing.cpp
+
+output.o: ../output.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o output.o ../output.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

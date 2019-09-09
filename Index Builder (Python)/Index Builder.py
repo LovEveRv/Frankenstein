@@ -27,10 +27,10 @@ def build_index(path, extension, filter):
                     filter_y = min(filter_y, y)
             elif x < filter_x or y < filter_y:
                 continue
-            index_file.write(str(i) + ' "' + file + '"\n')
+            index_file.write(str(i) + ' ' + file + '\n')
             i += 1
             print("Image " + str(i) + " index built.")
-    index_file.write("shape " + str(filter_x) + ' ' + str(filter_y))
+    index_file.write("-1 " + str(filter_x) + ' ' + str(filter_y))
     index_file.close()
     print(str(i) + " images included. Index building finished.")
 
