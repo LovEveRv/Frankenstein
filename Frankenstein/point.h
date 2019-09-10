@@ -2,8 +2,8 @@
 class Element
 {
 private:
-    int *value;
     int _dim;
+    int *value;
 public:
     Element(int m_dim): _dim(m_dim), value(new int[m_dim]) {}
     Element(const Element &x) {*this = x;}

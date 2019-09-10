@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_H_
-#define CONTROLLER_H_
+#ifndef MODULES_H_
+#define MODULES_H_
 
 #include <vector>
 #include <map>
@@ -9,6 +9,8 @@
 #include <utility>
 #include <algorithm>
 #include "point.h"
+
+#define USING_QT //Using Qt Framework
 
 class Datapack_Imagelist //Datapack, from INPUT module to PREPROCESSING module
 {
@@ -44,19 +46,13 @@ public:
     static AlignType ALIGN;
 
     static int VAGUE_ARG;
-    enum Quality {MAXIMUM, SUITABLE, MINIMUM};
+    enum Quality {QUALITY_MAXIMUM, QUALITY_SUITABLE, QUALITY_MINIMUM};
     static Quality OUTPUT_QUALITY;
-};
 
-class Messager //Showing messages to create an interface
-{
-private:
-    int former_percentage;
-public:
-    void reset_percentage() {former_percentage = -1;}
-    void show_percentage(int percentage); //print to screen
+    static int CORE_PROCESSING_DISTPUNISH;
+    static int CORE_PROCESSING_THRESHOLD;
+    static int CORE_PROCESSING_ALGSELECT;
 };
-extern Messager msg;
 
 #endif /* CONTROLLER_H_ */
 

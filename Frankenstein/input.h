@@ -1,3 +1,5 @@
+#ifndef INPUT_H_
+#define INPUT_H_
 #include <fstream>
 #include "modules.h"
 
@@ -10,3 +12,5 @@ public:
     ~Input_Module() {delete imgList;}
     Datapack_Imagelist* init(const std::string& filepath);
 };
+
+#endif

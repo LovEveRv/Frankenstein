@@ -7,14 +7,14 @@ class Core_Process_Module
 {
 private:
     Datapack_Imageinfo* Input_Data;
-    Datapack_Matchinfo* myMatch;
+    Datapack_Matchinfo* matchInfo;
     double dist_punish;
     int threshold;
 
     void Build_Graph(int opt = 0);
 public:
-    Core_Process_Module(Datapack_Imageinfo* m_datapack, double m_dist_punish, int m_threshold): Input_Data(m_datapack), myMatch(nullptr), dist_punish(m_dist_punish), threshold(m_threshold) {}
-    ~Core_Process_Module() {delete myMatch;}
+    Core_Process_Module(Datapack_Imageinfo* m_datapack, double m_dist_punish, int m_threshold);
+    ~Core_Process_Module() {delete matchInfo;}
     Datapack_Matchinfo* execute(int alg_selection);
 };
 

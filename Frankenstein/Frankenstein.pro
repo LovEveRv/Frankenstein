@@ -35,7 +35,8 @@ SOURCES += \
         core_processing.cpp \
         input.cpp \
         preprocessing.cpp \
-        output.cpp
+        output.cpp \
+        messager.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +48,8 @@ HEADERS += \
         core_processing.h \
         input.h \
         preprocessing.h \
-        output.h
+        output.h \
+        messager.h
 
 FORMS += \
         mainwindow.ui
