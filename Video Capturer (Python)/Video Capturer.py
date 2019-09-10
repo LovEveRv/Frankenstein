@@ -1,7 +1,8 @@
 import cv2
 import os
 
-def get_video_fram(video, savepath, prefix, interval, shrink_rate):
+
+def get_video_frame(video, savepath, prefix, interval, shrink_rate):
     if not os.path.exists(savepath):
         os.mkdir(savepath)
     caper = cv2.VideoCapture(video)
@@ -25,4 +26,4 @@ savepath = input("请输入保存文件夹路径: ")
 prefix = input("请输入想要的保存文件名前缀: ")
 interval = int(input("请输入取样间隔(单位:帧): "))
 shrink_rate = int(input("请输入缩放比例(0~100): "))
-get_video_fram(video, savepath, prefix, interval, shrink_rate/100)
+get_video_frame(video, savepath, prefix, interval, shrink_rate/100)
