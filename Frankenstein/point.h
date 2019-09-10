@@ -17,4 +17,4 @@ public:
 
 int dist(const Element&,const Element&);
 
-/* Developed by lkmcfj, 2019. All rights reserved. */
+/* Developed by lkmcfj & LovEveRv, 2019. All rights reserved. */

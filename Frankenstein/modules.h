@@ -41,19 +41,23 @@ public:
     static int ALLOWED_HEIGHT;
     static int PROCESSING_WIDTH;
     static int PROCESSING_HEIGHT;
+    static int TARGET_WIDTH;
+    static int TARGET_HEIGHT;
 
     enum AlignType {ALIGN_LEFT_TOP, ALIGN_CENTER, ALIGN_RIGHT_BOTTOM};
     static AlignType ALIGN;
 
-    static int VAGUE_ARG;
+    static int BLOCKS_PER_ROW;
     enum Quality {QUALITY_MAXIMUM, QUALITY_SUITABLE, QUALITY_MINIMUM};
     static Quality OUTPUT_QUALITY;
 
     static int CORE_PROCESSING_DISTPUNISH;
     static int CORE_PROCESSING_THRESHOLD;
     static int CORE_PROCESSING_ALGSELECT;
+
+    static int SAFE_ERROR_NUMBER;
 };
 
-#endif /* CONTROLLER_H_ */
+#endif
 
 /* Developed by LovEveRv, 2019. All rights reserved. */

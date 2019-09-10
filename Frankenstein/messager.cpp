@@ -1,6 +1,6 @@
 #include "messager.h"
 
-Messager msg;
+Messager *msg;
 
 void Messager::show_percentage(int percentage)
 {

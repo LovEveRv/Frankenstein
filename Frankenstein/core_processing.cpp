@@ -3,22 +3,23 @@
 #ifdef USING_QT
 #include "messager.h"
 #endif
+
 void reset_percentage()
 {
     #ifdef USING_QT
-    msg.reset_percentage();
+    msg->reset_percentage();
     #endif
 }
 void show_percentage(int value)
 {
     #ifdef USING_QT
-    msg.show_percentage(value);
+    msg->show_percentage(value);
     #endif
 }
 void print_info(const std::string& info)
 {
     #ifdef USING_QT
-    msg.print_info(info);
+    msg->print_info(info);
     #endif
 }
 
@@ -33,18 +34,18 @@ namespace ALG //Default match algorithm
         int flow; //the flow on this edge
         int cost; //the cost on this edge
     };
-    std::vector<Edge> ed; //T, R, S, T
-    std::vector<int> last; //the index of the last edge of this node
-    std::vector<int> dis;
-    std::vector<int> mark; //current arc optimization
-    int S, T, V; //V records the number of nodes
-    int Rnum, Tnum; //Number of resource pictures & Number of divides of target pictrue
-    int totalflow;
+    static std::vector<Edge> ed; //T, R, S, T
+    static std::vector<int> last; //the index of the last edge of this node
+    static std::vector<int> dis;
+    static std::vector<int> mark; //current arc optimization
+    static int S, T, V; //V records the number of nodes
+    static int Rnum, Tnum; //Number of resource pictures & Number of divides of target pictrue
+    static int totalflow;
     inline void getmatch(std::vector<std::vector<int>>& Matchinfo)
     {
-        for(int i = 0; i < Matchinfo.size(); i++)
+        for(size_t i = 0; i < Matchinfo.size(); i++)
         {
-            for(int j = 0; j < Matchinfo[i].size(); j++)
+            for(size_t j = 0; j < Matchinfo[i].size(); j++)
             {
                 int cur = last[i * Matchinfo[i].size() + j];
                 while(cur != -1)
@@ -136,8 +137,8 @@ namespace ALG //Default match algorithm
     }
 
 
-    std::vector<int> DIS;
-    std::vector<bool> VIS;
+    static std::vector<int> DIS;
+    static std::vector<bool> VIS;
     int aug(int x, int flow)
     {
         VIS[x] = 1;
@@ -167,7 +168,7 @@ namespace ALG //Default match algorithm
     {
         if(VIS[T] == 1) return true;
         int z = INF;
-        for(int i = 0; i < ed.size(); i++)
+        for(size_t i = 0; i < ed.size(); i++)
         {
             if(ed[i].flow > 0 && VIS[ed[i].from] && !VIS[ed[i].to]) z = std::min(z, DIS[ed[i].from] + ed[i].cost - DIS[ed[i].to]);
         }
@@ -262,7 +263,7 @@ void Core_Process_Module::Build_Graph(int opt)
             show_percentage(Tid * 100 / (ALG::Tnum - 1));
             ++Tid;
         }    
-    for(int k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
+    for(size_t k = 0; k < Input_Data->Resource_Image_Info.size(); k++)
     {
         int Rid = ALG::Tnum + k;
         addedge(Rid, ALG::T, 1, 1);

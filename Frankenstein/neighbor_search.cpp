@@ -5,7 +5,7 @@ using std::vector;
 using std::pair;
 
 template<int range>
-NeighborSearcher<range>::NeighborSearcher(int m_dim, int m_d): _dim(m_dim), d(m_d), cnt(0) 
+NeighborSearcher<range>::NeighborSearcher(int m_dim, int m_d): d(m_d), cnt(0), _dim(m_dim)
 {
     filter = new SparseBitset*[_dim];
     for(int i=0;i<_dim;++i) filter[i] = new SparseBitset[range];
@@ -20,7 +20,7 @@ template<int range>
 void NeighborSearcher<range>::add_point(const Element &x)
 {
     int cur=cnt++;
-    for(size_t i=0;i<_dim;++i)
+    for(int i=0;i<_dim;++i)
     {
         for(int j=std::max(0,x[i]-d);j<=std::min(range-1,x[i]+d);++j) filter[i][j].push_back(cur);
     }

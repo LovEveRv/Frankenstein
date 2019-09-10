@@ -18,7 +18,7 @@ public:
     Datapack_Matchinfo* execute(int alg_selection);
 };
 
-#endif /* CORE_PROCESSING_H_ */
+#endif
 
 /* Developed by LovEveRv, 2019. All rights reserved. */
 /* Special thanks to lkmcfj. */

@@ -1,7 +1,7 @@
 #include "preprocessing.h"
 #include <cmath>
-#include <QImage>
 #ifdef USING_QT
+#include <QImage>
 #include "messager.h"
 #endif
 
@@ -22,11 +22,20 @@ Datapack_Imageinfo *Pre_Process_Module::execute()
     QImage img;
 
     //Processing Resource_Image_Info
-    msg.print_info("    Processing resource images.");
-    msg.reset_percentage();
+    msg->print_info("    Processing resource images.");
+    msg->reset_percentage();
     for(int i=0; i<max_Index; i++)
     {
-        img.load(QString::fromStdString(srcdir_path + imgList->Img_Index[i]));
+        img.load(QString::fromStdString(srcdir_path + '/' + imgList->Img_Index[i]));
+        if(img.isNull())
+        {
+            Element ele(3);
+            ele[0] = Settings::SAFE_ERROR_NUMBER;
+            ele[1] = Settings::SAFE_ERROR_NUMBER;
+            ele[2] = Settings::SAFE_ERROR_NUMBER;
+            imgInfo->Resource_Image_Info.push_back(ele);
+            continue; //This will never be selected
+        }
         int width = img.width();
         int height = img.height();
         int ori_x, ori_y;
@@ -61,18 +70,20 @@ Datapack_Imageinfo *Pre_Process_Module::execute()
         ele[1] = G / total;
         ele[2] = B / total;
         imgInfo->Resource_Image_Info.push_back(ele);
-        msg.show_percentage(i / (max_Index-1));
+        msg->show_percentage(i * 100 / (max_Index-1));
     }
 
     //Processing Target_Image_Info
-    msg.print_info("    Processing target image.");
-    msg.reset_percentage();
+    msg->print_info("    Processing target image.");
+    msg->reset_percentage();
     img.load(QString::fromStdString(target_path));
     int width = img.width();
     int height = img.height();
-    int widnum = std::floor(double((1-width)/100)*Settings::VAGUE_ARG+width + 0.5);
+    Settings::TARGET_WIDTH = width;
+    Settings::TARGET_HEIGHT = height;
+    int widnum = Settings::BLOCKS_PER_ROW;
     int s_width = width / widnum;
-    int s_height = std::floor(double(s_width/Settings::PROCESSING_WIDTH*Settings::PROCESSING_HEIGHT) + 0.5);
+    int s_height = std::floor(double(s_width)/Settings::PROCESSING_WIDTH*Settings::PROCESSING_HEIGHT + 0.5);
     int heinum = height / s_height;
     int total = s_width * s_height;
     for(int i=0; i<widnum; i++)
@@ -95,7 +106,7 @@ Datapack_Imageinfo *Pre_Process_Module::execute()
             ele[1] = G / total;
             ele[2] = B / total;
             tmp.push_back(ele);
-            msg.show_percentage((i*widnum+j)/(widnum*heinum-1));
+            msg->show_percentage((i*heinum+j)/(widnum*heinum-1));
         }
         imgInfo->Target_Image_Info.push_back(tmp);
     }

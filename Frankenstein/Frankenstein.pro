@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        dialog_process.cpp \
         main.cpp \
         mainwindow.cpp \
         controller.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
         messager.cpp
 
 HEADERS += \
+        dialog_process.h \
         mainwindow.h \
         controller.h \
         modules.h \
@@ -52,6 +54,7 @@ HEADERS += \
         messager.h
 
 FORMS += \
+        dialog_process.ui \
         mainwindow.ui
 
 # Default rules for deployment.
