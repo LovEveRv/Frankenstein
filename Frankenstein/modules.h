@@ -56,6 +56,7 @@ public:
     static int CORE_PROCESSING_ALGSELECT;
 
     static int SAFE_ERROR_NUMBER;
+    static int LOSS_DIVISION;
 };
 
 #endif

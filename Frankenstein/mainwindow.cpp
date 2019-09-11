@@ -25,12 +25,12 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    ui->target_path->setText(QFileDialog::getOpenFileName(this, "Select a picture", "/", tr("Images (*.jpg *.jpeg *.png *.bmp")));
+    ui->target_path->setText(QFileDialog::getOpenFileName(this, "Select a picture"));
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
-    ui->save_path->setText(QFileDialog::getSaveFileName(this, "Save as", "/", tr("Images (*.jpg *.jpeg *.png *.bmp")));
+    ui->save_path->setText(QFileDialog::getSaveFileName(this, "Save as"));
 }
 
 void MainWindow::on_pushButton_3_clicked()

@@ -28,8 +28,8 @@ def build_index(path, extension, filter):
             elif x < filter_x or y < filter_y:
                 continue
             index_file.write(str(i) + ' ' + file + '\n')
-            i += 1
             print("Image " + str(i) + " index built.")
+            i += 1
     index_file.write("-1 " + str(filter_x) + ' ' + str(filter_y))
     index_file.close()
     print(str(i) + " images included. Index building finished.")
