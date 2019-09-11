@@ -26,5 +26,5 @@ void Dialog_Process::print_info(const QString &info)
 
 void Dialog_Process::finish()
 {
-    ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
 }
